@@ -37,12 +37,26 @@ async function run() {
             const result = await cursor.toArray();
             res.send(result);
         })
+        app.get('/roomsReview', async (req, res) => {
+            const cursor = roomCollection.find({}, { projection: { _id: 1, reviews: 1 } });
+            const result = await cursor.toArray();
+            res.send(result);
+        });
         app.get('/rooms/:id', async (req, res) => {
             const id = req.params.id;
             const query = { _id: new ObjectId(id) }
             const result = await roomCollection.findOne(query);
             res.send(result);
         })
+        app.post('/rooms/:id', async (req, res) => {
+            const { id } = req.params;
+            const { email, name, time, rating, review } = req.body;
+            const result = await roomCollection.updateOne(
+                { _id: new ObjectId(id) },
+                { $push: { reviews: { email, name, time, rating, review } } }
+            );
+            res.send(result)
+        });
         app.patch('/rooms/:id', async (req, res) => {
             const id = req.params.id;
             const filter = { _id: new ObjectId(id) };
