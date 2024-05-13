@@ -1,5 +1,6 @@
 const express = require('express');
 const cors = require('cors');
+const jwt = require('jsonwebtoken');
 const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
 const app = express();
 require('dotenv').config();
@@ -31,6 +32,16 @@ async function run() {
         const roomCollection = client.db('BookedInn').collection('rooms');
         const bookingCollection = client.db('BookedInn').collection('bookings');
 
+        //Auth related API
+
+        app.post('/jwt',async(req,res)=>{
+            const user = req.body;
+            console.log(user);
+            const token = jwt.sign(user, process.env.ACCESS_TOKEN_SECRET , {expiresIn: '1h'})
+            res.send(token);
+        })
+
+        //rooms related API
         app.get('/rooms', async (req, res) => {
             const cursor = roomCollection.find();
             const result = await cursor.toArray();
