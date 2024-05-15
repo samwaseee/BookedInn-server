@@ -170,7 +170,7 @@ async function run() {
             const result = await bookingCollection.find(query).toArray();
             res.send(result);
         })
-        app.get('/bookings/:id', async (req, res) => {
+        app.get('/bookings/:id',verifyToken, async (req, res) => {
             const id = req.params.id;
             const query = { _id: new ObjectId(id) }
             const result = await bookingCollection.findOne(query);
@@ -178,22 +178,21 @@ async function run() {
         })
 
 
-        app.post('/bookings', async (req, res) => {
+        app.post('/bookings',verifyToken, async (req, res) => {
             const booking = req.body;
             //console.log(booking);
             const result = await bookingCollection.insertOne(booking);
             res.send(result);
         })
 
-        app.patch('/bookings/:id', async (req, res) => {
+        app.patch('/bookings/:id',verifyToken, async (req, res) => {
             const id = req.params.id;
             const filter = { _id: new ObjectId(id) };
             const updatedBooking = req.body;
-            const { checkIn, checkOut } = updatedBooking;
+            const { checkIn } = updatedBooking;
             const updateDoc = {
                 $set: {
-                    checkIn,
-                    checkOut
+                    checkIn
                 }
             };
             const result = await bookingCollection.updateOne(filter, updateDoc);
