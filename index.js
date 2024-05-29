@@ -69,6 +69,7 @@ async function run() {
         const roomCollection = client.db('BookedInn').collection('rooms');
         const bookingCollection = client.db('BookedInn').collection('bookings');
         const reviewCollection = client.db('BookedInn').collection('reviews');
+        const menuCollection = client.db('BookedInn').collection('resturantMenu');
 
         //Auth related API
 
@@ -150,6 +151,14 @@ async function run() {
         app.post('/Review', async (req, res) => {
             const review = req.body;
             const result = await reviewCollection.insertOne(review);
+            res.send(result);
+        });
+
+        //Resturant Menu
+
+        app.get('/menu', async (req, res) => {
+            const cursor = menuCollection.find();
+            const result = await cursor.toArray();
             res.send(result);
         });
 
